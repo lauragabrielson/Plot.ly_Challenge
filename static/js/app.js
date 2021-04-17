@@ -35,13 +35,116 @@ function drawBargraph(sampleId) {
 
 function drawBubblechart(sampleId) {
     console.log(`drawBubblechart(${sampleId})`);
+    d3.json("samples.json").then(function(data) {
+        var samples = data.samples;
+        var resultArray = samples.filter(s => s.id == sampleId);
+        var result = resultArray[0];
+        var otu_ids = result.otu_ids;
+        var otu_labels = result.otu_labels;
+        var sample_values = result.sample_values;
+
+        var bubbleData = {
+            x: otu_ids,
+            y: sample_values,
+            text: otu_labels,
+            mode: 'markers',
+            marker: {
+            // color: ['rgb(93, 164, 214)', 'rgb(255, 144, 14)',  'rgb(44, 160, 101)', 'rgb(255, 65, 54)'],
+            size: sample_values
+        }
+    };
+      
+        var bubbles = [bubbleData];
+      
+        var bubLayout = {
+            title: 'Bacteria by Sample',
+            showlegend: false,
+            margin: {t: 30, l: 150},
+            height: 400,
+            width: 1100
+        }
+      
+      Plotly.newPlot('bubble', bubbles, bubLayout);
+    });
 }
 
 function showMetadata(sampleId) {
     console.log(`showMetadata(${sampleId})`);
+    d3.json("samples.json").then(function(data) {
+        
+        var metadata = data.metadata;
+
+        var result = metadata.filter(m => m.id.toString() === sampleId)[0];
+
+        // select demographic panel to put data
+        var demographicInfo = d3.select("#sample-metadata");
+        
+        // empty the demographic info panel each time before getting new id info
+        demographicInfo.html("");
+
+        // grab the necessary demographic data data for the id and append the info to the panel
+        Object.entries(result).forEach((key) => {   
+                // demographicInfo.append("h5").text(key[0].toUpperCase() + ": " + key[1] + "\n");
+                demographicInfo.append("h5").text(key[0] + ": " + key[1] + "\n");    
+        });
+    });
+
+    //     var resultArray = samples.filter(s => s.id == sampleId);
+    //     var result = resultArray[0];
+    //     var key = result.key
+    //     var pair = result.pair
+        
+        
+
+    //     var values = [key, pair]
+      
+    //     var data = [{
+    //         type: 'table',
+    //         header: {
+    //         values: values,
+    //         align: "center",
+    //         // line: {width: 1, color: 'black'},
+    //         // fill: {color: "grey"},
+    //         // font: {family: "Arial", size: 12, color: "white"}
+    //     },
+    //     cells: {
+    //       values: values,
+    //       align: "center",
+    //     //   line: {color: "black", width: 1},
+    //     //   font: {family: "Arial", size: 11, color: ["black"]}
+    //     }
+    //   }];
+      
+    //   Plotly.newPlot('sample-metadata', data);
+    // });
 }
 
-// function drawGauge(sampleId) {}
+function drawGauge(sampleId) {
+    d3.json("samples.json").then(function(data) {
+
+        var samples = data.metadata;
+        var resultArray = samples.filter(s => s.id == sampleId);
+        var result = resultArray[0];
+        var wfreq = result.wfreq;
+
+        var gaugeData = [
+         {
+            domain: { x: [0, 9], y: [0, 9] },
+            value: wfreq,
+            title: { text: "Washes per Week" },
+            type: "indicator",
+            mode: "gauge+number"
+        }
+        ];
+    
+        var gaugeLayout = { 
+            width: 600, 
+            height: 500, 
+            margin: { t: 0, b: 0 } 
+        };
+    Plotly.newPlot('gauge', gaugeData, gaugeLayout);
+    });
+}
 
 function optionChanged(newSampleId) {
     console.log(`User selected ${newSampleId}`);
@@ -49,6 +152,7 @@ function optionChanged(newSampleId) {
     drawBargraph(newSampleId);
     drawBubblechart(newSampleId);
     showMetadata(newSampleId);
+    drawGauge(newSampleId);
 }
 
 
@@ -69,7 +173,7 @@ function initDashboard() {
         drawBargraph(id);
         drawBubblechart(id);
         showMetadata(id);
-        // drawGauge(id);
+        drawGauge(id);
     });
    
 }
