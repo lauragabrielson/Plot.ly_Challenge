@@ -111,7 +111,7 @@ function drawGauge(sampleId) {
          {
             domain: { x: [0, 9], y: [0, 9] },
             value: wfreq,
-            title: { text: "Washes per Week" },
+            title: { text: 'Belly Button Washing Frequency <br> (Scrubs per Week)'},
             type: "indicator",
             mode: "gauge+number",
             // delta: { reference: 9, increasing: { color: "green" } },
