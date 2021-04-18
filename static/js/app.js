@@ -1,6 +1,4 @@
-// from Dom's instructional video
-
-console.log("app.js loaded");
+// with help from Dom's instructional video
 
 function drawBargraph(sampleId) {
     console.log(`drawBargraph(${sampleId})`);
@@ -19,6 +17,15 @@ function drawBargraph(sampleId) {
             x: sample_values.slice(0.10).reverse, //TBD
             y: yticks,
             type: "bar",
+            marker: {
+                // color: 'rgb(158,202,225)',
+                color: 'rgb(189, 209, 250',
+                // opacity: 0.6,
+                line: {
+                  color: 'rgb(28, 50, 92)',
+                  width: 1.5
+                },
+            },
             text: otu_labels.slice(0,10).reverse, //TBD
             orientation: "h"
         }
@@ -49,18 +56,20 @@ function drawBubblechart(sampleId) {
             text: otu_labels,
             mode: 'markers',
             marker: {
-            // color: ['rgb(93, 164, 214)', 'rgb(255, 144, 14)',  'rgb(44, 160, 101)', 'rgb(255, 65, 54)'],
-            size: sample_values
+                color: otu_ids, 
+                size: sample_values,
+                colorscale: [[0, "rgb(189, 209, 250)"], [1, "rgb(59, 102, 182)"]],
+            }
         }
-    };
+    
       
         var bubbles = [bubbleData];
       
         var bubLayout = {
-            title: 'Bacteria by Sample',
+            title: 'Microbial Species by OTU ID',
             showlegend: false,
             margin: {t: 30, l: 150},
-            height: 400,
+            height: 500,
             width: 1100
         }
       
@@ -76,48 +85,19 @@ function showMetadata(sampleId) {
 
         var result = metadata.filter(m => m.id.toString() === sampleId)[0];
 
-        // select demographic panel to put data
+        // select demographic panel 
         var demographicInfo = d3.select("#sample-metadata");
         
-        // empty the demographic info panel each time before getting new id info
+        // empty the demographic info before getting new id info
         demographicInfo.html("");
 
         // grab the necessary demographic data data for the id and append the info to the panel
         Object.entries(result).forEach((key) => {   
-                // demographicInfo.append("h5").text(key[0].toUpperCase() + ": " + key[1] + "\n");
                 demographicInfo.append("h5").text(key[0] + ": " + key[1] + "\n");    
         });
     });
-
-    //     var resultArray = samples.filter(s => s.id == sampleId);
-    //     var result = resultArray[0];
-    //     var key = result.key
-    //     var pair = result.pair
-        
-        
-
-    //     var values = [key, pair]
-      
-    //     var data = [{
-    //         type: 'table',
-    //         header: {
-    //         values: values,
-    //         align: "center",
-    //         // line: {width: 1, color: 'black'},
-    //         // fill: {color: "grey"},
-    //         // font: {family: "Arial", size: 12, color: "white"}
-    //     },
-    //     cells: {
-    //       values: values,
-    //       align: "center",
-    //     //   line: {color: "black", width: 1},
-    //     //   font: {family: "Arial", size: 11, color: ["black"]}
-    //     }
-    //   }];
-      
-    //   Plotly.newPlot('sample-metadata', data);
-    // });
 }
+
 
 function drawGauge(sampleId) {
     d3.json("samples.json").then(function(data) {
@@ -133,14 +113,42 @@ function drawGauge(sampleId) {
             value: wfreq,
             title: { text: "Washes per Week" },
             type: "indicator",
-            mode: "gauge+number"
-        }
-        ];
+            mode: "gauge+number",
+            // delta: { reference: 9, increasing: { color: "green" } },
+            gauge: {
+                type: "shape",
+                axis: { range: [null, 9] },
+                bar: {color: "rgb(28, 50, 92)"},
+               
+
+                steps: [
+                    { range: [0, 1], color: "rgb(189, 209, 250)", text: "0-1" },
+                    { range: [1, 2], color: "rgb(189, 209, 250)" },
+                    { range: [2, 3], color: "rgb(189, 209, 250", text: "0-1" },
+                    { range: [3, 4], color: "rgb(95, 132, 204)" },
+                    { range: [4, 5], color: "rgb(95, 132, 204)", text: "0-1" },
+                    { range: [5, 6], color: "rgb(95, 132, 204)" },
+                    { range: [6, 7], color: "rgb(59, 102, 182)", text: "0-1" },
+                    { range: [7, 8], color: "rgb(59, 102, 182)" },
+                    { range: [8, 9], color: "rgb(59, 102, 182)", text: "0-1" }
+
+                ],
+            
+            
+                threshold: {
+                    line: { color: "rgb(28, 50, 92)", width: 4 },
+                    thickness: 0.75,
+                    value: 9
+                }
+            }
+         }]
+    
+
     
         var gaugeLayout = { 
             width: 600, 
             height: 500, 
-            margin: { t: 0, b: 0 } 
+            margin: { t: 25, b: 25} 
         };
     Plotly.newPlot('gauge', gaugeData, gaugeLayout);
     });
@@ -180,30 +188,3 @@ function initDashboard() {
 
 initDashboard();
 
-
-
-
-// fetch and read JSON file
-// bind data
-// function init() {
-//     d3.json("./samples.json").then(function(data){
-
-    
-//         d3.select("#selDataset")
-//             .selectAll("option")
-//             .data(data.names)
-//             .enter()
-//             .append("option")
-//             .html(function (d) {
-//                 return '<option>${d}</option>';
-                       
-//         });
-//     });
-    
-// };
-
-// console.log(data) 
-
-
-
-// init()
