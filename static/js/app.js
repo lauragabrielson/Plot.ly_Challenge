@@ -1,4 +1,4 @@
-// with help from Dom in office hours
+// portions of this code were provided in the instructor's tutorial during office hours
 
 // bargraph function
 function drawBargraph(sampleId) {
